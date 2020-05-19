@@ -11,11 +11,13 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        $posts = Post::all();
-        // dd($posts);
-        return view('posts.index', compact('posts'));
+
+        $postsPublished = Post::where('published', 1)->get();
+        $postsAll = Post::all(); // POST lo prende da USE POST
+        return view('posts.index', compact('postsPublished', 'postsPublishedAll')); // gli passiamo 2 DB filtrati passati con COMPACT
     }
 
     /**
