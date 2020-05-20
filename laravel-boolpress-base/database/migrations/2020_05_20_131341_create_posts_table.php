@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 class CreatePostsTable extends Migration
 {
     /**
@@ -17,14 +15,13 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string('title', 150);
             $table->text('body');
-            $table->string('slug');
-            $table->string('author');
-            $table->text('src');
+            $table->string('slug')->unique();
+            $table->string('author', 100);
+            $table->string('src')->default('https://picsum.photos/200/300');
             $table->boolean('published');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

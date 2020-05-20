@@ -1,8 +1,10 @@
+
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Post;
+Use App\Post;
 class PostController extends Controller
 {
     /**
@@ -10,14 +12,14 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     public function index()
-     {
-         $posts = Post::all();
-         $postsPublished = Post::where('published', 1)->get();
-         // dd($posts);
-         return view('posts.index', compact('posts'));
-         // return view('posts.index', compact('posts', 'postsPublished'));
-     }
+
+    public function index()
+    {
+        $postsPublished = Post::where('published', 1)->get();
+        $postsAll = Post::all(); // POST lo prende da USE POST
+        return view('posts.index', compact('postsPublished', 'postsPublishedAll')); // gli passiamo 2 DB filtrati passati con COMPACT
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -25,43 +27,20 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        //
     }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-     public function store(Request $request)
-     {
-       $data = $request->all();
-       $data['slug'] = Str::slug($data['title'] , '-') . rand(1,100);
-       // $validator = Validator::make($data, [
-       //     'title' => 'required|string|max:150',
-       //     'body' => 'required',
-       //     'author' => 'required'
-       // ]);
-       // if ($validator->fails()) {
-       //     return redirect('posts/create')
-       //         ->withErrors($validator)
-       //         ->withInput();
-       // }
-       // $request->validate([
-       //     'title' => 'required|string|max:150',
-       //     'body' => 'required',
-       //     'author' => 'required'
-       // ]);
-       // dd($request->all(););
-       $post = new Post;
-       $post->title = $data['title'];
-       $post->fill($data);
-       $saved = $post->save();
-       if(!$saved) {
-           dd('errore di salvataggio');
-       }
-       return redirect()->route('posts.show', $post->id);
-     }
+    public function store(Request $request)
+    {
+        //
+    }
+
     /**
      * Display the specified resource.
      *
@@ -72,6 +51,7 @@ class PostController extends Controller
     {
         //
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -82,6 +62,7 @@ class PostController extends Controller
     {
         //
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -93,6 +74,7 @@ class PostController extends Controller
     {
         //
     }
+
     /**
      * Remove the specified resource from storage.
      *
