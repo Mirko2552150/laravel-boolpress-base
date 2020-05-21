@@ -1,8 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Post;
+use Illuminate\Support\Str; // helpers laravel, fa diventare la stringa della SLUG
+use Illuminate\Support\Facades\Validator;
+use App\Post; // importo il model POST
 class PostController extends Controller
 {
     /**
@@ -12,11 +13,11 @@ class PostController extends Controller
      */
      public function index()
      {
-         $posts = Post::all();
+         $posts = Post::all(); // prendo tutti i RECORD
          $postsPublished = Post::where('published', 1)->get();
          // dd($posts);
-         return view('posts.index', compact('posts'));
-         // return view('posts.index', compact('posts', 'postsPublished'));
+         return view('posts.index', compact('posts', 'postsPublished'));
+
      }
     /**
      * Show the form for creating a new resource.
@@ -35,26 +36,20 @@ class PostController extends Controller
      */
      public function store(Request $request)
      {
-       $data = $request->all();
+       $data = $request->all(); // prendo i dati dall' INPUT
        $data['slug'] = Str::slug($data['title'] , '-') . rand(1,100);
-       // $validator = Validator::make($data, [
-       //     'title' => 'required|string|max:150',
-       //     'body' => 'required',
-       //     'author' => 'required'
-       // ]);
-       // if ($validator->fails()) {
-       //     return redirect('posts/create')
-       //         ->withErrors($validator)
-       //         ->withInput();
-       // }
-       // $request->validate([
-       //     'title' => 'required|string|max:150',
-       //     'body' => 'required',
-       //     'author' => 'required'
-       // ]);
-       // dd($request->all(););
+       $validator = Validator::make($data, [
+           'title' => 'required|string|max:150',
+           'body' => 'required',
+           'author' => 'required'
+       ]);
+       if ($validator->fails()) {
+           return redirect('posts/create')
+               ->withErrors($validator)
+               ->withInput();
+       }
        $post = new Post;
-       $post->title = $data['title'];
+       // $post->title = $data['title'];
        $post->fill($data);
        $saved = $post->save();
        if(!$saved) {
@@ -70,7 +65,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+      $post = Post::where('id', $id)->first();
+      return view('posts.show', compact('post'));
     }
     /**
      * Show the form for editing the specified resource.
