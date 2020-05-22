@@ -2,8 +2,9 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // helpers laravel, fa diventare la stringa della SLUG
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator; // importo il nostro validator, per il check dei campi del form
 use App\Post; // importo il model POST
+use Carbon\Carbon;
 class PostController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class PostController extends Controller
      public function index()
      {
          $posts = Post::all(); // prendo tutti i RECORD
-         $postsPublished = Post::where('published', 1)->get();
+         $postsPublished = Post::where('published', 1)->get(); // prendo i dati filtrati
          // dd($posts);
          return view('posts.index', compact('posts', 'postsPublished'));
 
@@ -26,7 +27,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return view('posts.create'); // mi ritorna sempre la PAG CREATE NON DINAMICA
     }
     /**
      * Store a newly created resource in storage.
@@ -34,28 +35,36 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-     public function store(Request $request)
+     public function store(Request $request) // prende i dati dal FORM, il request e' un oggetto
      {
-       $data = $request->all(); // prendo i dati dall' INPUT
-       $data['slug'] = Str::slug($data['title'] , '-') . rand(1,100);
-       $validator = Validator::make($data, [
+       $data = $request->all(); // prendo gli attributi dall' FORM
+       $now = Carbon::now()->format('Y-m-d-H-i-s');
+       $data['slug'] = Str::slug($data['title'] , '-') . $now; // helpers per lavorare per stringhe
+       $validator = Validator::make($data, [ // scrivo i controlli del validator
            'title' => 'required|string|max:150',
            'body' => 'required',
+           'src' => 'required',
+           'published' => 'required',
            'author' => 'required'
        ]);
        if ($validator->fails()) {
-           return redirect('posts/create')
-               ->withErrors($validator)
-               ->withInput();
+           return redirect('posts/create') // dinamica
+               ->withErrors($validator) // mi permette di usare @errors
+               ->withInput(); // mantiene i file corretti inseriti dall'utente, mi permette di usare OLD
        }
        $post = new Post;
        // $post->title = $data['title'];
-       $post->fill($data);
+       if(empty($data['src'])) {
+         $data['src'] = 'mio path';
+       }
+       $post->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
        $saved = $post->save();
        if(!$saved) {
            dd('errore di salvataggio');
        }
-       return redirect()->route('posts.show', $post->id);
+       // se usiamo redirect e NON view cambia la URI, come click sul un lin
+       // return redirect()->route('posts.show', $post->slug); // restituisco all ROUTE lo SLUG creato dal title
+       return redirect()->route('posts.show', $post->id); // restituisco all ROUTE lo SLUG creato dal title ROTTE DINAMICHE
      }
     /**
      * Display the specified resource.
@@ -63,20 +72,31 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    // public function show($slug) // prende in ingresso l-attributo dal RETURN della funzione STORE e cerca quel record
+    public function show($id) // prende in ingresso l-attributo dal RETURN della funzione STORE e cerca quel record
     {
       $post = Post::where('id', $id)->first();
-      return view('posts.show', compact('post'));
+      // $post = Post::find($id)->get(); // mi cerca id corrispondente per SHOW
+      // $post = Post::where('slug', $slug)->first();
+      if (empty($post)) {
+        abort('404');
+      }
+      return view('posts.show', compact('post')); // ritorno un solo dato all posts.show, la VAR post
+
     }
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param Post $Post // modifico il parametro in ingresso
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post) // come se fosse un FIND
     {
-        //
+      if (empty($post)) {
+        abort('404');
+      }
+      // dd($Post);
+      return view('posts.edit', compact('post')); // gli ritorno la VAR POST
     }
     /**
      * Update the specified resource in storage.
@@ -85,9 +105,41 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) // simile a Store ma con l'ID che prediamo dalla rotta
     {
-        //
+      $post = Post::find($id);
+      if (empty($post)) {
+        abort('404');
+      }
+
+      $data = $request->all(); // prendo gli attributi dall' FORM
+      $now = Carbon::now()->format('Y-m-d-H-i-s');
+      $data['slug'] = Str::slug($data['title'] , '-') . $now; // helpers per lavorare per stringhe
+      $validator = Validator::make($data, [ // scrivo i controlli del validator
+          'title' => 'required|string|max:150',
+          'body' => 'required',
+          'src' => 'required',
+          'published' => 'required',
+          'author' => 'required'
+      ]);
+      if ($validator->fails()) {
+          return redirect('posts.edit') // dinamica
+              ->withErrors($validator) // mi permette di usare @errors
+              ->withInput(); // mantiene i file corretti inseriti dall'utente, mi permette di usare OLD
+      }
+
+      if(empty($data['src'])) {
+        $data['src'] = 'mio path';
+      }
+
+      $post->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
+      $post = $post->update();
+
+      if(!$post) {
+          dd('errore di salvataggio');
+      }
+
+      return redirect()->route('posts.show', $post->id);
     }
     /**
      * Remove the specified resource from storage.

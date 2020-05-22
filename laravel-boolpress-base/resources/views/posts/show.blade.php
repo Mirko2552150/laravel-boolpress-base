@@ -14,7 +14,7 @@
           <small>Scritto da {{$post->author}}</small>
           <div>
             {!! $post->body !!}
-            {{-- {{$article->body}} --}}
+            {{-- !! usiamo ESCAPE per evitare caratteri speciali, esempio text editor --}}
           </div>
           <img src="{{$post->img}}" alt="{{$post->title}}">
         </div>
