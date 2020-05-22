@@ -8,7 +8,11 @@
 <img src="{{$post->src}}" alt="">
 <a href="{{ route('posts.edit', $post->id) }}">Mofidica</a>
 <a href="{{ route('posts.show', $post->id) }}">Visualizza</a>
-<a href="{{ route('posts.destroy', $post->id) }}">Elimina</a>
+<form method="POST" action="{{route('posts.destroy', $post->id)}}">
+  @method('DELETE')
+  @csrf
+  <button type="submit" name="button">ELIMINA</button>
+</form>
 @endforeach
 {{-- <h1>POST PUBBLICATI</h1>
 @foreach ($postsPublished as $key => $postPublished)

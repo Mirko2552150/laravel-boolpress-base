@@ -113,8 +113,8 @@ class PostController extends Controller
       }
 
       $data = $request->all(); // prendo gli attributi dall' FORM
-      $now = Carbon::now()->format('Y-m-d-H-i-s');
-      $data['slug'] = Str::slug($data['title'] , '-') . $now; // helpers per lavorare per stringhe
+      // $now = Carbon::now()->format('Y-m-d-H-i-s');
+      $data['slug'] = Str::slug($data['title'] , '-') . $id; // helpers per lavorare per stringhe
       $validator = Validator::make($data, [ // scrivo i controlli del validator
           'title' => 'required|string|max:150',
           'body' => 'required',
@@ -135,11 +135,11 @@ class PostController extends Controller
       $post->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
       $post = $post->update();
 
-      if(!$post) {
-          dd('errore di salvataggio');
-      }
+      // if(!$post) {
+      //     dd('errore di salvataggio');
+      // }
 
-      return redirect()->route('posts.show', $post->id);
+      return redirect()->route('posts.show', $post->slug);
     }
     /**
      * Remove the specified resource from storage.
@@ -147,8 +147,16 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) // prendo in ingresso l ID dal FORM
     {
-        //
+      $post = Post::find($id);
+      // dd($id);
+      if (empty($post)) {
+        abort('404');
+      }
+
+      $post->delete();
+
+      return redirect()->route('posts.index');
     }
 }
