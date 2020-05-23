@@ -107,13 +107,15 @@ class PostController extends Controller
      */
     public function update(Request $request, $id) // simile a Store ma con l'ID che prediamo dalla rotta
     {
-      $post = Post::find($id);
+      // $post = Post::find($id);
+      $post = Post::where('id', $id)->first();
       if (empty($post)) {
         abort('404');
       }
 
       $data = $request->all(); // prendo gli attributi dall' FORM
       // $now = Carbon::now()->format('Y-m-d-H-i-s');
+      // dd($data['title']);
       $data['slug'] = Str::slug($data['title'] , '-') . $id; // helpers per lavorare per stringhe
       $validator = Validator::make($data, [ // scrivo i controlli del validator
           'title' => 'required|string|max:150',
@@ -123,7 +125,7 @@ class PostController extends Controller
           'author' => 'required'
       ]);
       if ($validator->fails()) {
-          return redirect('posts.edit') // dinamica
+          return redirect('posts/create') // dinamica
               ->withErrors($validator) // mi permette di usare @errors
               ->withInput(); // mantiene i file corretti inseriti dall'utente, mi permette di usare OLD
       }
@@ -133,11 +135,11 @@ class PostController extends Controller
       // }
 
       $post->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
-      $post->update();
+      $saved = $post->update();
 
-      // if(!$post) {
-      //     dd('errore di salvataggio');
-      // }
+      if(!$post) {
+          dd('errore di salvataggio');
+      }
 
       return redirect()->route('posts.show', $post->id);
     }

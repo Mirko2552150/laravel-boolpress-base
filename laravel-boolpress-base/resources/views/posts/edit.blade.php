@@ -8,39 +8,44 @@
   </head>
   <body>
     {{-- uso blade con il nome della nostra rotta cosi portiamo i dati del FORM alla nostra rotta per salvare --}}
-    <form action="{{route('posts.update', $post->id)}}" method="POST">
+    <form class="form-group" action="{{route('posts.update', $post->id)}}" method="POST">
       {{-- token per la sicurezza --}}
       @csrf
       {{-- inseriamo il metodo --}}
       @method('PUT')
-      <div class="">
-        <label for="title">Titolo</label>
-        <input type="text" placeholder="Inserisci i titolo" value="{{ (!empty(old('body'))) ? old('body') : $post->title }}">
+      <div class="form-group">
+        <label class="form-check-label" for="title">Titolo</label>
+        <input class="form-control" type="text" placeholder="Inserisci i titolo" value="{{ (!empty(old('body'))) ? old('body') : $post->title }}">
         @error ('title') {{ $message }}@enderror
       </div>
-      <div class="">
-        <label for="body">Testo</label>
-        {{-- se il campo non e' vuoto inserisco il valore inserito nel campo oppure insrisco il testo INSERISCI UN TESTO --}}
-        <textarea name="body" cols="30" rows="10">{{ (!empty(old('body'))) ? old('body') : $post->body }}</textarea>
+      <div class="form-group">
+        <label class="form-check-label" for="title">Autore</label>
+        <input class="form-control" type="text" placeholder="Inserisci il nome dell'autore" name="author" value="{{ (!empty(old('author'))) ? old('author') : $post->author }}">
       </div>
-      <div class="">
-        <label for="title">Autore</label>
-        <input type="text" placeholder="Inserisci il nome dell'autore" name="author" value="{{ (!empty(old('author'))) ? old('author') : $post->author }}">
+      <div class="form-group">
+        <label class="form-check-label" for="title">Immagine</label>
+        <input class="form-control" type="text" placeholder="Inserisci il path" name="src" value="{{ (!empty(old('src'))) ? old('src') : $post->src }}">
       </div>
-      <div class="">
-        <label for="title">Immagine</label>
-        <input type="text" placeholder="Inserisci il path" name="src" value="{{ (!empty(old('src'))) ? old('src') : $post->src }}">
+      <div class="form-group">
+        <label class="form-check-label" for="exampleInputEmail1">Email address</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
       </div>
-      <div class="">
-        {{-- for associato all ID dell INPUT --}}
-        <label for="not-published">Non Pubblicato</label>
+      <div class="form-group">
+        <label class="form-check-label" for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <label class="form-check-label" for="body">Testo</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="body">{{ (!empty(old('body'))) ? old('body') : $post->body }}</textarea>
+      </div>
+      <div class="form-check">
+        <label class="form-check-label" class="form-check-input" id="exampleCheck1" for="not-published">Non Pubblicato</label>
         <input type="radio" id="not-published" name="published" value="0" {{ ($post->published == 0) ? 'checked' : '' }}>
         <label for="published">Pubblicato</label>
-        <input type="radio" id="published" name="published" value="1" {{ ($post->published == 1) ? 'checked' : '' }}>
+        <input class="form-check-label" class="form-check-input" id="exampleCheck1" type="radio" id="published" name="published" value="1" {{ ($post->published == 1) ? 'checked' : '' }}>
       </div>
-      <div>
-        <input type="submit" value="Salva">
-      </div>
+      <button value="Salva" type="submit" class="btn btn-primary">Submit</button>
     </form>
   </body>
 </html>
