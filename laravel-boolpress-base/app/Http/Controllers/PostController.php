@@ -128,18 +128,18 @@ class PostController extends Controller
               ->withInput(); // mantiene i file corretti inseriti dall'utente, mi permette di usare OLD
       }
 
-      if(empty($data['src'])) {
-        $data['src'] = 'mio path';
-      }
+      // if(empty($data['src'])) {
+      //   $data['src'] = 'mio path';
+      // }
 
       $post->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
-      $post = $post->update();
+      $post->update();
 
       // if(!$post) {
       //     dd('errore di salvataggio');
       // }
 
-      return redirect()->route('posts.show', $post->slug);
+      return redirect()->route('posts.show', $post->id);
     }
     /**
      * Remove the specified resource from storage.
