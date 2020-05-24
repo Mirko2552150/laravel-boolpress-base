@@ -14,7 +14,8 @@ class PostController extends Controller
      */
      public function index()
      {
-         $posts = Post::all(); // prendo tutti i RECORD
+         // $posts = Post::all(); // prendo tutti i RECORD
+         $posts = Post::orderBy('id', 'desc')->paginate('5');
          $postsPublished = Post::where('published', 1)->get(); // prendo i dati filtrati
          // dd($posts);
          return view('posts.index', compact('posts', 'postsPublished'));
