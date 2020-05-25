@@ -15,7 +15,7 @@
       @method('PUT')
       <div class="form-group">
         <label class="form-check-label" for="title">Titolo</label>
-        <input class="form-control" type="text" placeholder="Inserisci i titolo" value="{{ (!empty(old('body'))) ? old('body') : $post->title }}">
+        <input name="title" class="form-control" type="text" placeholder="Inserisci i titolo" value="{{ (!empty(old('body'))) ? old('body') : $post->title }}">
         @error ('title') {{ $message }}@enderror
       </div>
       <div class="form-group">

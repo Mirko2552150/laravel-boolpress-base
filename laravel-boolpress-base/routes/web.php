@@ -18,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'PostController@index')->name('posts.index'); // cerco il controller e il nome della funzione, il name e' la index dei post, PARLANTE
 
 Route::resource('posts', 'PostController'); // creiamo piu rotte collegate alle funzioni(metodi) del controller, il primo arg si riferice all URI
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

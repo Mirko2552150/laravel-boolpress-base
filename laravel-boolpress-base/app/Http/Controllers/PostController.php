@@ -116,7 +116,6 @@ class PostController extends Controller
 
       $data = $request->all(); // prendo gli attributi dall' FORM
       // $now = Carbon::now()->format('Y-m-d-H-i-s');
-      // dd($data['title']);
       $data['slug'] = Str::slug($data['title'] , '-') . $id; // helpers per lavorare per stringhe
       $validator = Validator::make($data, [ // scrivo i controlli del validator
           'title' => 'required|string|max:150',
