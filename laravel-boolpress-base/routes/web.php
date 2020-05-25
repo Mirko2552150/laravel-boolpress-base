@@ -22,3 +22,12 @@ Route::resource('posts', 'PostController'); // creiamo piu rotte collegate alle 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+ Route::prefix('admin')
+ ->namespace('Admin')
+ ->name('admin.')
+ ->middleware('auth')
+
+ ->group(function () {
+   Route::resource('users', 'UserController');
+ });
