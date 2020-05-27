@@ -41,7 +41,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $data = $request->all();
+      // $user = Auth::id(); // id admin
+      // $data['user_id'] = $user; // push
+      $validator = Validator::make($data, [
+            'name' => 'required|unique:categories|max:80',
+            'email' => 'required|max:100'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.categories.create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+      dd('ok');
     }
 
     /**
@@ -52,7 +65,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+      $user = User::findOrFail($id);
+
+      return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -76,18 +91,34 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+      $user = User::findOrFail($id);
+
       $data = $request->all();
+      dd($data);
       $validate = Validator::make($data, [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users',
       ]);
 
       if ($validator->fails()) {
-          return redirect('admin.users.edit', $id) // dinamica
+          return redirect()->route('admin.users.edit', $id) // dinamica
               ->withErrors($validator) // mi permette di usare @errors
               ->withInput(); // mantiene i file corretti inseriti dall'utente, mi permette di usare OLD
       }
 
+      // if(empty($data['src'])) {
+      //   $data['src'] = 'mio path';
+      // }
+
+
+      $user->fill($data); // nel model inserisco in FILLABLE i nomi della colonne da compilare
+      $update = $user->update();
+
+      if(!$user) {
+          dd('errore di salvataggio');
+      }
+
+      return redirect()->route('admin.users.show', $user->id);
     }
 
     /**
@@ -98,6 +129,14 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+      $user = User::find($id);
+      // dd($id);
+      if (empty($user)) {
+        abort('404');
+      }
+
+      $user->delete();
+
+      return redirect()->route('admin.users');
     }
 }

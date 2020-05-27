@@ -12,7 +12,7 @@
             <input class="form-control" type="text" name="name" value="{{(!empty(old('name'))) ? old('name') : $user->name}}">
             @error ('name')
               <span class="alert alert-danger">
-                {{$message}}
+                {{ $message }}
               </span>
             @enderror
           </div>
@@ -21,7 +21,7 @@
             <input class="form-control" type="text" name="email" value="{{(!empty(old('email'))) ? old('email') : $user->email}}">
             @error ('email')
               <span class="alert alert-danger">
-                {{$message}}
+                {{ $message }}
               </span>
             @enderror
           </div>
